@@ -6,7 +6,11 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
+<<<<<<< HEAD
 		<version>3.3.6</version>
+=======
+		<version>3.13.0</version>
+>>>>>>> a014a244da31997474d20541ea3ee0bb98b3e436
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>prasad.curdapplication</groupId>
