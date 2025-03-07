@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import prasad.curdapplication.Entity.CustomerReport;
@@ -72,14 +74,24 @@ public class SpringBootBatchConfig {
 				.reader(reader())
 				.processor(processer())
 				.writer(writer())
+				.taskExecutor(taskExecutor())
 				.build();
 			
 	}
+	@Bean	
+	public TaskExecutor taskExecutor() {
+		SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
+		asyncTaskExecutor.setConcurrencyLimit(10);
+		return asyncTaskExecutor;
+	}
+
+
 	@Bean
 	public Job runJob(JobRepository jpaRepository,PlatformTransactionManager platformTransaction) {
 		return new JobBuilder("improt Customers",jpaRepository)
 				.flow(step1(jpaRepository,platformTransaction)).end().build();
 		
 	}
+	
 }
 

@@ -3,28 +3,30 @@ package prasad.curdapplication.Configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.core.userdetails.User;
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig{
 	
 	@Bean
 	public UserDetailsService userDetailsService(PasswordEncoder encoder) {
 		UserDetails  admin = User.withUsername("varaprasad")
 				.password(encoder.encode("pwd"))
-				.roles("admin")
+				.roles("ADMIN","USER")
 				.build();
 		UserDetails  user = User.withUsername("Lakshmi")
 				.password(encoder.encode("pwd"))
-				.roles("user")
+				.roles("USER")
 				.build();
 		return new InMemoryUserDetailsManager(user,admin);
 	}
@@ -35,13 +37,16 @@ public class SecurityConfig{
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
-		http.authorizeHttpRequests(
-								authorize -> authorize.requestMatchers("/course").hasAnyAuthority("user")
-								.requestMatchers("/course/**").authenticated()
-								.requestMatchers("/course/**").hasAnyAuthority("admin")
-								.anyRequest().authenticated()
-								);
-		return http.build();
+		http.authorizeHttpRequests((requests)->
+				requests.requestMatchers("/course/**")
+				.permitAll()
+				.requestMatchers("/couse/**")
+				.authenticated()
+				);
+				
+			return http.build();
+				
+		
 	}
 
 }

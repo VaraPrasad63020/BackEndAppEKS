@@ -13,6 +13,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,24 +52,28 @@ public class CourseController {
 	}
 
 	@GetMapping("/course")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<List<Course>> getAllCourseById() {
 		List<Course> allcourse = courseService.getAllcourse();
 		return new ResponseEntity<>(allcourse, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/course/{cid}")
+	
 	public ResponseEntity<String> deleteCourse(@PathVariable Long cid) {
 		String deleteCourse = courseService.deleteCourse(cid);
 		return new ResponseEntity<String>("Record is deleted" + deleteCourse, HttpStatus.OK);
 	}
 
 	@PutMapping("/course")
+	
 	public ResponseEntity<Course> updateCourse(@RequestBody Course course) {
 		Course status = courseService.upsert(course);
 		return new ResponseEntity<Course>(status, HttpStatus.OK);
 	}
 
 	@PostMapping("/batch")
+	
 	public void importCSVtoDBJob() throws Exception {
 		JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
 				.toJobParameters();
